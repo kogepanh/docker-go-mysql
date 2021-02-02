@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  # MySQL
+  db:
+    container_name: db
+    build: ./docker/db
+
+    # 環境変数
+    env_file: ./docker/db/mysql/.env
+
+    # ポート番号の定義付け
+    ports:
+      - 3306:3306
+
+    volumes:
+      # 永続化するためのマウント
+      - ./docker/db/mysql/data:/var/lib/mysql
+      # 設定ファイルが格納されている
+      - ./docker/db/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      # 初期データのクエリが格納されている
+      - ./docker/db/mysql/sql:/docker-entrypoint-initdb.d
+
+  # Express
+  api:
+    container_name: api
+    build: ./docker/api
+
+    # ホスト側のポート番号とコンテナ側のポート番号を定義付け
+    ports:
+      - 8080:8080
+
+    # ホスト上のボリュームとコンテナ側のボリュームを指定
+    volumes:
+      - ./docker/api/go:/go/src:cached
+
+    # コンテナの永続化
+    tty: true
+
+    # command: node app.js
+
+    depends_on:
+      - db
