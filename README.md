@@ -2,6 +2,9 @@
 
 ## 環境構築
 
+- /docker/db/mysql/.env ファイルが必要です。
+- /docker/api/go/.env ファイルが必要です。
+
 ```zsh
 docker -v
 docker-compose -v
