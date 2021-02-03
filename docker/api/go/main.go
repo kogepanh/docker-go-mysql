@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+	// 環境変数ファイルの読み込み
 	err := godotenv.Load(fmt.Sprintf("./%s.env", os.Getenv("GO_ENV")))
 	if err != nil {
 		fmt.Print(err)
