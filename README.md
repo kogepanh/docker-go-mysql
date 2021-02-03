@@ -54,4 +54,4 @@ docker-compose down
 ## Docker コンテナの利用方法
 
 - [MySQL に関するドキュメント](/docker/api/README.md)
-- [Golang に関するドキュメント](/docker/go/README.md)
+- [Golang に関するドキュメント](/docker/api/README.md)
