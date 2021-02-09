@@ -69,5 +69,5 @@ docker rmi [IMAGE_ID]
 
 ## Docker コンテナの利用方法
 
-- [MySQL に関するドキュメント](/docker/api/README.md)
+- [MySQL に関するドキュメント](/docker/db/README.md)
 - [Golang に関するドキュメント](/docker/api/README.md)
