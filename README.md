@@ -51,6 +51,22 @@ docker-compose down
 # docker-compose down --rmi all
 ```
 
+```zsh
+# 全コンテナ削除
+docker rm $(docker ps -q -a)
+
+# 指定コンテナ削除
+docker rm [CONTAINER_ID]
+```
+
+```zsh
+# 全イメージ削除
+docker rmi $(docker images -q)
+
+# 指定イメージ削除
+docker rmi [IMAGE_ID]
+```
+
 ## Docker コンテナの利用方法
 
 - [MySQL に関するドキュメント](/docker/api/README.md)

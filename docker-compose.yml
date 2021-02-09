@@ -15,13 +15,13 @@ services:
 
     volumes:
       # 永続化するためのマウント
-      - ./docker/db/mysql/data:/var/lib/mysql
+      # - ./docker/db/mysql/data:/var/lib/mysql
       # 設定ファイルが格納されている
       - ./docker/db/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
       # 初期データのクエリが格納されている
       - ./docker/db/mysql/sql:/docker-entrypoint-initdb.d
 
-  # Express
+  # Go
   api:
     container_name: api
     build: ./docker/api
@@ -37,7 +37,9 @@ services:
     # コンテナの永続化
     tty: true
 
-    # command: node app.js
+    command: go run main.go
 
+    # 依存関係
+    # dbのコンテナが立ち上がってから出ないとapiのコンテナが立ち上がらない
     depends_on:
       - db

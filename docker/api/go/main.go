@@ -2,45 +2,22 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"os"
+	"strconv"
 
-	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
+	"github.com/gin-gonic/gin"         // ginフレームワーク
+	_ "github.com/go-sql-driver/mysql" // mysql用ドライバー
+	"github.com/jinzhu/gorm"           // gorm
 	"github.com/joho/godotenv"
 )
 
-func main() {
-	// 環境変数ファイルの読み込み
-	err := godotenv.Load(fmt.Sprintf("./%s.env", os.Getenv("GO_ENV")))
-	if err != nil {
-		fmt.Print(err)
-	}
-
-	DBMigrate(DBConnect())
-
-	r := gin.Default()
-
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "成功",
-		})
-	})
-
-	r.Run(":8080")
-}
-
 type User struct {
 	gorm.Model
-	NickName string `json:"nickName"`
+	NickName string
 }
 
-func DBMigrate(db *gorm.DB) *gorm.DB {
-	db.AutoMigrate(&User{})
-	return db
-}
-
-func DBConnect() *gorm.DB {
+func gormConnect() *gorm.DB {
 	DBMS := "mysql"
 	USER := os.Getenv("MYSQL_USER")
 	PASS := os.Getenv("MYSQL_PASSWORD")
@@ -52,4 +29,80 @@ func DBConnect() *gorm.DB {
 		panic(err.Error())
 	}
 	return db
+}
+
+func dbInit() {
+	db := gormConnect()
+	defer db.Close() // コネクション解放
+
+	db.AutoMigrate(&User{})
+}
+
+func dbInsert(nickname string) {
+	db := gormConnect()
+	defer db.Close()
+
+	db.Create(&User{NickName: nickname})
+}
+
+func dbGetAll() []User {
+	db := gormConnect()
+	defer db.Close()
+
+	var users []User
+	// 取得した情報は引数で与えたモデルに格納される
+	db.Find(&users)
+	return users
+}
+
+func dbGetOneByID(id int) User {
+	db := gormConnect()
+	defer db.Close()
+
+	var user User
+	db.First(&user, id)
+	return user
+}
+
+func main() {
+	// 環境変数ファイルの読み込み
+	err := godotenv.Load(fmt.Sprintf("./%s.env", os.Getenv("GO_ENV")))
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	router := gin.Default()
+	dbInit()
+
+	router.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "dadsadasdsa",
+		})
+	})
+
+	router.GET("/users", func(c *gin.Context) {
+		users := dbGetAll()
+		c.JSON(http.StatusOK, gin.H{
+			"users": users,
+		})
+	})
+
+	router.GET("/users/:id", func(c *gin.Context) {
+		n := c.Param("id")
+		id, err := strconv.Atoi(n)
+		if err != nil {
+			panic(err)
+		}
+		user := dbGetOneByID(id)
+		c.JSON(http.StatusOK, gin.H{
+			"users": user,
+		})
+	})
+
+	router.POST("/users/:nickname", func(c *gin.Context) {
+		nickname := c.Param("nickname")
+		dbInsert(nickname)
+	})
+
+	router.Run(":8080")
 }
