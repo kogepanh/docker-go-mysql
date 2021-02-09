@@ -7,8 +7,6 @@ ENV TZ Asia/Tokyo
 
 # 作業ディレクトリ
 WORKDIR /go/src
-# ホットリロード環境
-# WORKDIR /go/src/hot_reload_docker
 
 # 実行コマンド
 RUN apk update

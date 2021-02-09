@@ -33,16 +33,12 @@ services:
     # ホスト上のボリュームとコンテナ側のボリュームを指定
     volumes:
       - ./docker/api/go:/go/src:cached
-      # ホットリロード環境
-      # - ./docker/api/go:/go/src/hot_reload_docker:cached
 
     # コンテナの永続化
     tty: true
 
     # コマンド実行
     command: go run main.go
-    # ホットリロード環境
-    # command: go get github.com/pilu/fresh && fresh
 
     # 依存関係
     # dbのコンテナが立ち上がってから出ないとapiのコンテナが立ち上がらない
